@@ -1,0 +1,102 @@
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { SplitText } from "gsap/all";
+import { useRef } from "react";
+import { useMediaQuery } from "react-responsive";
+
+const Hero = () =>{
+
+    const videoRef = useRef();
+
+    const isMobile = useMediaQuery({ maxWidth: 767})
+
+    useGSAP(() => {
+        const heroSplit = new SplitText('.title', {type: 'chars, words'});
+
+        const paraSplit = new SplitText(".subtitle", {type: 'lines'});
+
+        heroSplit.chars.forEach((char) => char.classList.add('text-gradient'));
+
+        gsap.from(heroSplit.chars, {
+            yPercent: 100,
+            duration: 1.5,
+            ease:"expo.out",
+            stagger: 0.07,
+        });
+
+        gsap.from(paraSplit.lines, {
+            opacity: 0,
+            yPercent: 100,
+            ease:"expo.out",
+            stagger: 0.07,
+            delay: 1,
+        })
+
+        gsap.timeline({
+            scrollTrigger:{
+                trigger: "#hero",
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true,
+            }
+        })
+        .to('.right-leaf', { y: 300}, 0)
+        .to('.left-leaf', { y: -300}, 0)
+
+        const startValue = isMobile ? 'top 50%' : 'center 60%';
+        const endValue =  isMobile ? '120% top' : 'bottom top';
+
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: 'video',
+                start: startValue,
+                end: endValue,
+                scrub: true,
+                pin: true,
+            }
+        })
+
+        videoRef.current.onloadedmetadata = () => {
+            tl.to(videoRef.current, {
+                currentTime: videoRef.current.duration
+            })
+        }
+
+    }, []);
+
+    return(
+        <>
+            <section id="hero" className="noisy">
+                <h1 className="title">
+                    MOJITO
+                </h1>
+                <img src="/images/hero-left-leaf.png" className="left-leaf"/>
+                <img src="/images/hero-right-leaf.png" className="right-leaf"/>
+                <div className="body">
+                    <div className="content">
+                        <div className="space-y-5 hidden lg:block">
+                            <p>
+                                Cool. Crisp. Classic.
+                            </p>
+                            <p className="subtitle">
+                                Sip the Spite <br/> of Summer
+                            </p>
+                        </div>
+                        <div className="view-cocktails">
+                            <p className="subtitle">
+                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                            </p>
+                            <a href="#cocktails">View Cocktails</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div className="video absolute inset-0">
+                <video src="/videos/output.mp4" muted playsInline preload="auto" ref={videoRef} />
+            </div>
+        </>
+    )
+}
+
+export default Hero;
