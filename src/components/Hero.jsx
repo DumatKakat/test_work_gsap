@@ -76,7 +76,7 @@ const Hero = () =>{
                     <div className="content">
                         <div className="space-y-5 hidden lg:block">
                             <p>
-                                Cool. Crisp. Classic.
+                                Cool. Crisp. Classic. MZM. GaySex. 
                             </p>
                             <p className="subtitle">
                                 Sip the Spite <br/> of Summer
